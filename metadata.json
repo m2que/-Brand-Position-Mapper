@@ -1,0 +1,6 @@
+{
+  "name": "Brand Position Mapper",
+  "description": "An AI-powered tool that takes a brand name and maps its position on a customer perception map relative to its competitors. It automatically determines the mapping scope (global or regional) and provides supporting sources.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
