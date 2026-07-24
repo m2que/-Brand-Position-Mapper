@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brand Position Mapper</title>
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['Georgia', 'Times New Roman', 'serif'],
+              body: ['ui-sans-serif', 'system-ui', 'sans-serif']
+            },
+            colors: {
+              parchment: '#f7f1e7',
+              ink: '#1f2937',
+              moss: '#1f5f5b',
+              bronze: '#c67d32',
+              stone: '#6b7280'
+            },
+            boxShadow: {
+              card: '0 24px 80px rgba(61, 41, 20, 0.12)'
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.45s ease-out both'
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' }
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[linear-gradient(180deg,#fffaf2_0%,#f7f1e7_48%,#f3ecdf_100%)] font-body text-ink">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+  </html>
