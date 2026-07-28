@@ -85,7 +85,7 @@ const App: React.FC = () => {
         </main>
 
         <footer className="mt-auto pt-8 text-center text-sm text-stone">
-          <p>Powered by Google Gemini. Outputs are designed to support evidence-aware academic analysis and should still be reviewed critically.</p>
+          <p>© 2026 MarketLearn. AI-assisted content — verify before implementation.</p>
           <p className="mt-2">
             Contact:{' '}
             <a href="mailto:marketlearn.online@gmail.com" className="text-moss underline decoration-[rgba(31,95,91,0.4)] underline-offset-4 hover:text-bronze">

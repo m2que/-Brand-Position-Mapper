@@ -11,9 +11,17 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
   const [brandName, setBrandName] = useState('');
   const [scope, setScope] = useState<ScopeOption>('Global');
   const [regionalQuery, setRegionalQuery] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (brandName.trim().length > 200) {
+      setErrorMessage('Brand name must be 200 characters or fewer.');
+      return;
+    }
+
+    setErrorMessage('');
     onSubmit(brandName, scope, regionalQuery);
   };
 
@@ -26,7 +34,13 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
             <input
               type="text"
               value={brandName}
-              onChange={(event) => setBrandName(event.target.value)}
+              onChange={(event) => {
+                setBrandName(event.target.value);
+                if (errorMessage) {
+                  setErrorMessage('');
+                }
+              }}
+              maxLength={200}
               placeholder="Enter a brand name (e.g., Tesla, Nike, Samsung)"
               className="w-full rounded-2xl border border-[rgba(31,95,91,0.14)] bg-[#fffaf2] px-4 py-3 text-base text-ink placeholder:text-stone focus:outline-none"
               disabled={isLoading}
@@ -71,6 +85,7 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
         <p className="px-1 text-sm leading-5 text-stone">
           Choose <strong>Global</strong> for an overall market view, or switch to <strong>Regional</strong> to focus the perception map on a specific geography.
         </p>
+        {errorMessage ? <p className="px-1 text-sm leading-5 text-red-700">{errorMessage}</p> : null}
       </div>
     </form>
   );

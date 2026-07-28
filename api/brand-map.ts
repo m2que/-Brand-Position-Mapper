@@ -24,8 +24,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { brandName, scope } = req.body ?? {};
 
-  if (typeof brandName !== 'string' || !brandName.trim()) {
+  const normalizedBrandName = typeof brandName === 'string' ? brandName.trim() : '';
+
+  if (!normalizedBrandName) {
     return res.status(400).json({ error: 'Brand name is required.' });
+  }
+
+  if (normalizedBrandName.length > 300) {
+    return res.status(400).json({ error: 'Brand name must be 300 characters or fewer.' });
   }
 
   if (typeof scope !== 'string' || !scope.trim()) {
@@ -45,7 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: buildBrandMapPrompt({ brandName: brandName.trim(), scope: scope.trim() }),
+      contents: buildBrandMapPrompt({ brandName: normalizedBrandName, scope: scope.trim() }),
       config: {
         tools: [{ googleSearch: {} }],
         temperature: 0.1
