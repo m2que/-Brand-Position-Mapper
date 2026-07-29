@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { buildBrandMapPrompt, parseBrandMapResponse } from '../lib/brandMap';
+import { buildBrandMapPrompt, parseBrandMapResponse } from '../lib/brandMap.ts';
 
 type VercelRequest = {
   method?: string;
