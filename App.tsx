@@ -9,12 +9,8 @@ import type { MapData, ScopeOption } from './types';
 
 const PositionMapIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-    <path d="M12 4v16"></path>
-    <path d="M4 12h16"></path>
-    <path d="M12 4l-1.75 1.75"></path>
-    <path d="M12 4l1.75 1.75"></path>
-    <path d="M20 12l-1.75-1.75"></path>
-    <path d="M20 12l-1.75 1.75"></path>
+    <path d="M12 23V1"></path>
+    <path d="M1 12h22"></path>
   </svg>
 );
 
