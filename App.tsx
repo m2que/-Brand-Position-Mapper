@@ -61,6 +61,14 @@ const App: React.FC = () => {
                 <ChartBarIcon className="h-4 w-4" />
                 MarketLearn Featured Tool
               </div>
+              <div>
+                <a
+                  href="https://marketlearn.online"
+                  className="inline-flex items-center rounded-full border border-[rgba(15,118,110,0.18)] bg-[rgba(255,252,247,0.9)] px-4 py-2 text-sm font-medium text-teal-800 shadow-[0_10px_24px_rgba(61,41,20,0.06)] transition hover:-translate-y-px hover:border-[rgba(15,118,110,0.3)] hover:text-teal-900"
+                >
+                  Back to MarketLearn
+                </a>
+              </div>
               <h1 className="font-serif text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
                 Brand Position Mapper
               </h1>
@@ -103,7 +111,13 @@ const App: React.FC = () => {
         </main>
 
         <footer className="mt-auto pt-8 text-center text-sm text-stone">
-          <p>© 2026 MarketLearn. AI-assisted content — verify before implementation.</p>
+          <p>
+            © 2026{' '}
+            <a href="https://marketlearn.online" className="text-moss underline decoration-[rgba(31,95,91,0.4)] underline-offset-4 hover:text-bronze">
+              MarketLearn
+            </a>
+            . AI-assisted content — verify before implementation.
+          </p>
           <p className="mt-2">
             Contact:{' '}
             <a href="mailto:marketlearn.online@gmail.com" className="text-moss underline decoration-[rgba(31,95,91,0.4)] underline-offset-4 hover:text-bronze">
