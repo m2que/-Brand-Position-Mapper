@@ -55,7 +55,7 @@ const App: React.FC = () => {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(198,125,50,0.16),transparent_30%),radial-gradient(circle_at_top_right,rgba(31,95,91,0.16),transparent_26%)]"></div>
       <div className="w-full max-w-7xl mx-auto">
         <header className="mb-10 rounded-[28px] border border-[rgba(113,86,56,0.14)] bg-[rgba(255,252,247,0.9)] px-6 py-10 shadow-[0_24px_80px_rgba(61,41,20,0.12)] sm:px-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-3xl">
               <div className="mb-4 inline-flex items-center gap-3 rounded-full bg-[rgba(15,118,110,0.08)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-teal-800">
                 <ChartBarIcon className="h-4 w-4" />
@@ -75,7 +75,7 @@ const App: React.FC = () => {
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">How to use it</p>
               <p className="mt-3 font-serif text-2xl font-semibold text-slate-900">Global or regional brand mapping</p>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                Start with one brand, compare its perceived position against competitors, then use the mapped dimensions and sources to support strategic analysis.
+                Start with one brand, compare its perceived position against competitors, then use the results to inform strategy.
               </p>
             </div>
           </div>
