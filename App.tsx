@@ -3,16 +3,9 @@ import BrandInputForm from './components/BrandInputForm';
 import DashboardDisplay from './components/DashboardDisplay';
 import ErrorDisplay from './components/ErrorDisplay';
 import LoadingIndicator from './components/LoadingIndicator';
-import { ChartBarIcon } from './components/icons';
+import { ChartBarIcon, PositionMapIcon } from './components/icons';
 import { fetchBrandMapData } from './services/geminiService';
 import type { MapData, ScopeOption } from './types';
-
-const PositionMapIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-    <path d="M12 23V1"></path>
-    <path d="M1 12h22"></path>
-  </svg>
-);
 
 const App: React.FC = () => {
   const [mapData, setMapData] = useState<MapData | null>(null);
