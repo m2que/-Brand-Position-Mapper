@@ -36,7 +36,40 @@ const WEAK_SOURCE_PATTERNS = [
   'brainly.',
   'quizlet.',
   'owlers.com',
-  'owler.com'
+  'owler.com',
+  'wikipedia.org',
+  'wiki/',
+  'vertexaisearch.cloud.google.com',
+  'webcache',
+  '/amp/',
+  'translate.google.com',
+  'webcache.googleusercontent.com'
+];
+
+const PREFERRED_REFERENCE_HOST_PATTERNS = [
+  '.gov',
+  '.edu',
+  'reuters.com',
+  'bloomberg.com',
+  'ft.com',
+  'nytimes.com',
+  'wsj.com',
+  'forbes.com',
+  'statista.com',
+  'mckinsey.com',
+  'gartner.com',
+  'deloitte.com',
+  'fortunebusinessinsights.com',
+  'imarcgroup.com',
+  'euromonitor.com',
+  'mintel.com',
+  'nielsen.com',
+  'kantar.com',
+  'pewresearch.org',
+  'oecd.org',
+  'worldbank.org',
+  'who.int',
+  'un.org'
 ];
 
 const OFFICIAL_SOURCE_HINTS = [
@@ -73,11 +106,19 @@ const normalizeCategory = (category: string): ReferenceCategory => {
 
 const getDisplaySourceLabel = (url: string): string => {
   try {
-    return new URL(url).hostname.replace(/^www\./, '');
+    const hostname = new URL(url).hostname.replace(/^www\./, '');
+    if (hostname.includes('vertexaisearch.cloud.google.com')) return 'this source';
+    return hostname;
   } catch {
     return url;
   }
 };
+
+const stripHyperlinksFromReferenceDescription = (value: string) => value
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/gi, '$1')
+  .replace(/https?:\/\/\S+/gi, '')
+  .replace(/\s{2,}/g, ' ')
+  .trim();
 
 const sanitizeUrl = (url: string): string | null => {
   try {
@@ -86,6 +127,36 @@ const sanitizeUrl = (url: string): string | null => {
   } catch {
     return null;
   }
+};
+
+const normalizeReferenceUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    parsed.hash = '';
+
+    const trackingParams = [
+      'utm_source',
+      'utm_medium',
+      'utm_campaign',
+      'utm_term',
+      'utm_content',
+      'gclid',
+      'fbclid',
+      'ved',
+      'usg'
+    ];
+
+    trackingParams.forEach((param) => parsed.searchParams.delete(param));
+
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+};
+
+const isPreferredReferenceHost = (url: string) => {
+  const lowerUrl = url.toLowerCase();
+  return PREFERRED_REFERENCE_HOST_PATTERNS.some((pattern) => lowerUrl.includes(pattern));
 };
 
 const dedupeReferences = <T extends { url: string }>(references: T[]): T[] => {
@@ -105,6 +176,9 @@ const isFilteredArtifact = (url: string, title: string) => {
 
   return lowerUrl.includes('google.com/search')
     || lowerUrl.includes('google.com/travel')
+    || lowerUrl.includes('vertexaisearch.cloud.google.com')
+    || lowerUrl.includes('wikipedia.org')
+    || lowerTitle.includes('wikipedia')
     || lowerTitle.includes('current time')
     || lowerTitle.includes('weather')
     || lowerTitle.includes('google maps')
@@ -414,13 +488,14 @@ const curateReferences = (references: Reference[], verifiedSources: Map<string, 
     .filter((reference) => !isFilteredArtifact(reference.url, reference.title))
     .map((reference) => ({
       ...reference,
+      url: normalizeReferenceUrl(reference.url),
       category: inferCategoryFromSource(reference.title, reference.url, reference.category),
-      relevanceNote: reference.relevanceNote?.trim() || buildReferenceNote(reference.category, brandName, scope, reference.title, reference.url)
+      relevanceNote: stripHyperlinksFromReferenceDescription(reference.relevanceNote?.trim() || buildReferenceNote(reference.category, brandName, scope, reference.title, reference.url))
     }));
 
   const external = cleaned
     .filter((reference) => reference.category !== 'official_brand')
-    .sort((first, second) => scoreReferenceStrength(second) - scoreReferenceStrength(first));
+    .sort((first, second) => Number(isPreferredReferenceHost(second.url)) - Number(isPreferredReferenceHost(first.url)) || scoreReferenceStrength(second) - scoreReferenceStrength(first))
 
   if (external.length >= EXTERNAL_REFERENCE_TARGET) {
     return external.slice(0, MAX_VISIBLE_REFERENCES);
@@ -431,15 +506,15 @@ const curateReferences = (references: Reference[], verifiedSources: Map<string, 
       const category = inferCategoryFromSource(title || '', url, '');
       return {
         title: title || url,
-        url,
+        url: normalizeReferenceUrl(url),
         category,
-        relevanceNote: buildReferenceNote(category, brandName, scope, title || url, url)
+        relevanceNote: stripHyperlinksFromReferenceDescription(buildReferenceNote(category, brandName, scope, title || url, url))
       };
     })
   )
     .filter((reference) => !isFilteredArtifact(reference.url, reference.title))
     .filter((reference) => reference.category !== 'official_brand')
-    .sort((first, second) => scoreReferenceStrength(second) - scoreReferenceStrength(first));
+    .sort((first, second) => Number(isPreferredReferenceHost(second.url)) - Number(isPreferredReferenceHost(first.url)) || scoreReferenceStrength(second) - scoreReferenceStrength(first))
 
   const mergedExternal = dedupeReferences([...external, ...groundedRecovered]);
   if (mergedExternal.length >= EXTERNAL_REFERENCE_TARGET) {
@@ -561,7 +636,7 @@ export const parseBrandMapResponse = (jsonText: string, verifiedSources: Map<str
   const rawReferences = Array.isArray(data.references)
     ? data.references.map((ref) => {
         const source = ref as { title?: string; url?: string; category?: string; relevanceNote?: string };
-        let finalUrl = typeof source.url === 'string' ? source.url.trim() : '';
+        let finalUrl = typeof source.url === 'string' ? normalizeReferenceUrl(source.url.trim()) : '';
         let finalTitle = typeof source.title === 'string' ? source.title.trim() : '';
         let isValid = false;
 
@@ -598,8 +673,8 @@ export const parseBrandMapResponse = (jsonText: string, verifiedSources: Map<str
           url: finalUrl,
           category,
           relevanceNote: typeof source.relevanceNote === 'string' && source.relevanceNote.trim()
-            ? source.relevanceNote.trim()
-            : buildReferenceNote(category, targetBrandName, scope, finalTitle || finalUrl, finalUrl)
+            ? stripHyperlinksFromReferenceDescription(source.relevanceNote.trim())
+            : stripHyperlinksFromReferenceDescription(buildReferenceNote(category, targetBrandName, scope, finalTitle || finalUrl, finalUrl))
         };
       }).filter((reference): reference is Reference => reference !== null)
     : [];

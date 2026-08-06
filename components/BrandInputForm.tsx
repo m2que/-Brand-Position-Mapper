@@ -13,8 +13,8 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
   const [regionalQuery, setRegionalQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleAnalyzeClick = () => {
+    if (isLoading) return;
 
     if (brandName.trim().length > 200) {
       setErrorMessage('Brand name must be 200 characters or fewer.');
@@ -23,6 +23,10 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
 
     setErrorMessage('');
     onSubmit(brandName, scope, regionalQuery);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
   };
 
   return (
@@ -43,8 +47,13 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
             <input
               type="text"
               value={brandName}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                }
+              }}
               onChange={(event) => {
-                setBrandName(event.target.value);
+                setBrandName(event.target.value.slice(0, 200));
                 if (errorMessage) {
                   setErrorMessage('');
                 }
@@ -57,7 +66,8 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
           </label>
 
           <button
-            type="submit"
+            type="button"
+            onClick={handleAnalyzeClick}
             disabled={isLoading}
             className="flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#f2c66d,#d9a441)] px-6 py-3 font-bold text-[#1f2937] shadow-[0_18px_34px_rgba(89,64,18,0.34)] transition-all duration-300 hover:-translate-y-px hover:bg-[linear-gradient(135deg,#f5d27f,#e0af4e)] focus:outline-none focus:ring-2 focus:ring-[rgba(254,240,138,0.55)] focus:ring-offset-2 focus:ring-offset-[#0a3c39] disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -90,6 +100,11 @@ const BrandInputForm: React.FC<BrandInputFormProps> = ({ onSubmit, isLoading }) 
             <input
               type="text"
               value={regionalQuery}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                }
+              }}
               onChange={(event) => setRegionalQuery(event.target.value)}
               placeholder={scope === 'Regional' ? 'e.g., USA, GCC, Western Europe' : 'Used only for regional scope'}
               className="w-full rounded-2xl border border-[rgba(255,248,225,0.22)] bg-[rgba(255,250,240,0.08)] px-4 py-3 text-base text-[#fff8ea] placeholder:text-[rgba(246,231,200,0.62)] focus:outline-none focus:ring-2 focus:ring-[rgba(254,240,138,0.35)] disabled:cursor-not-allowed disabled:opacity-60"
